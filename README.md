@@ -73,10 +73,6 @@ This is work in progress.
 Support
 -------
 
-If you experience a problem with dashboard or have a problem, file a
-request or issue on the dashboard queue at
-
-
 --TODO--
 Need to add support information.
 ------------
