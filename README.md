@@ -85,7 +85,7 @@ Available at http://drupal6.theazureblue.com
 login: drupal6
 pw: drupal6
 
-specifically checkout http://drupal6.theazureblue.com/nd/4/neodashboard for the public dashboard of user 4.
+specifically checkout http://drupal6.theazureblue.com/nd/4/neodash for the public dashboard of user 4.
 
 Licensed under the GPL 2.0.
 http://www.gnu.org/licenses/gpl-2.0.txt
