@@ -1,8 +1,10 @@
 neo_dashboard
 =============
 
-The neo_dashboard module is a fork of the dashboard module in drupal project. It is a 
-tool for providing personalized dashboard interfaces, similar to iGoogle or MyYahoo. 
+The neo_dashboard module is a fork of the dashboard module in drupal project. 
+The current module is only for Drupal 6; I am working on making it work for 
+Drupal 7. It is a tool for providing personalized dashboard interfaces, similar 
+to iGoogle or MyYahoo. 
 
 Improvements in Neo Dashboard: (1) The dashboards so created can be shared with users
                                    (public dashboard is default behaviour - it can be
