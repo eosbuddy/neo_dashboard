@@ -1,0 +1,578 @@
+<?php
+// $Id: dashboard.module,v 1.39.4.2 2010/07/28 16:27:36 beretta627 Exp $
+//drupal_rebuild_theme_registry();
+/**
+ * @file
+ * Dashboard module main file.
+ * This file stores core Drupal hooks and the common functions
+ * required by Dashboard module, including internal hooks.
+ */
+
+/**
+ * Implement hook_menu().
+ */
+function neo_dashboard_menu() {
+  $items = array(
+    'admin/settings/neodash' => array(
+      'title' => 'NeoDash',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('neo_dashboard_settings_form'),
+      'access arguments' => array('administer neo dashboard defaults'),
+      'description' => t('Administer general neo dashboard settings.'),
+      'file' => 'neo_dashboard.admin.inc',
+    ),
+    'admin/settings/neodash/default' => array(
+      'title' => 'General Options',
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+    ),
+    'admin/settings/neodash/widgets' => array(
+      'title' => 'Default Widgets',
+      'page callback' => 'neo_dashboard_overview',
+      'access arguments' => array('administer neo dashboard defaults'),
+      'description' => t('Shows all available widgets on a the site.'),
+      'file' => 'neo_dashboard.admin.inc',
+      'type' => MENU_LOCAL_TASK,
+    ),
+    'admin/settings/neodash/default-options' => array(
+      'title' => 'Select Default Widgets',
+      'page callback' => 'neo_dashboard_select_defaults',
+      'access arguments' => array('administer neo dashboard defaults'),
+      'description' => t('Shows a list of default widgets to add to the site.'),
+      'file' => 'neo_dashboard.admin.inc',
+      'type' => MENU_LOCAL_TASK,
+    ),
+    'admin/settings/neodash/default-options/make-available' => array(
+      'page callback' => 'neo_dashboard_default_make_available',
+      'access arguments' => array('administer neo_dashboard defaults'),
+      'file' => 'neo_dashboard.admin.inc',
+    ),
+    'admin/settings/neodash/default-options/make-permanent' => array(
+      'page callback' => 'neo_dashboard_system_make_available',
+      'access arguments' => array('administer neo_dashboard defaults'),
+      'file' => 'neo_dashboard.admin.inc',
+    ),
+    'admin/settings/neodash/default-options/remove' => array(
+      'page callback' => 'neo_dashboard_default_remove',
+      'access arguments' => array('administer neo dashboard defaults'),
+      'file' => 'neo_dashboard.admin.inc',
+    ),
+    'admin/settings/neodash/default-options/removesys' => array(
+      'page callback' => 'neo_dashboard_system_remove',
+      'access arguments' => array('administer neo dashboard defaults'),
+      'file' => 'neo_dashboard.admin.inc',
+    ),
+    'admin/settings/neodash/add/modal' => array(
+      'page callback' => 'neo_dashboard_wizard_modal',
+      'access arguments' => array('administer neo dashboard defaults'),
+      'file' => 'neo_dashboard.admin.inc',
+    ),
+    'admin/settings/neodash/ajax/autocomplete/tag' => array(
+      'page callback' => 'neo_dashboard_autocomplete_tag',
+      'access arguments' => array('administer neo dashboard defaults'),
+      'file' => 'neo_dashboard.admin.inc',
+      'type' => MENU_CALLBACK,
+    ),
+    'admin/settings/neodash/ajax/autocomplete/node' => array(
+      'page callback' => 'neo_dashboard_autocomplete_node',
+      'access arguments' => array('administer neo dashboard defaults'),
+      'file' => 'neo_dashboard.admin.inc',
+      'type' => MENU_CALLBACK,
+    ),
+    'admin/settings/neodash/ajax/autocomplete/block' => array(
+      'page callback' => 'neo_dashboard_autocomplete_block',
+      'access arguments' => array('administer neo dashboard defaults'),
+      'file' => 'neo_dashboard.admin.inc',
+      'type' => MENU_CALLBACK,
+    ),
+    // Delete default widget
+    'admin/settings/neodash/widget/%/delete' => array(
+      'title' => 'Delete',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('neo_dashboard_default_widget_delete_confirm', 4),
+      'access arguments' => array('administer neo dashboard defaults'),
+      'file' => 'neo_dashboard.admin.inc',
+      'type' => MENU_CALLBACK
+    ),
+    // Edit default widget
+    'admin/settings/neodash/widget/%/edit' => array(
+      'title' => 'Delete',
+      'page callback' => 'neo_dashboard_wizard_modal',
+      'access arguments' => array('administer neo dashboard defaults'),
+      'file' => 'neo_dashboard.admin.inc',
+      'type' => MENU_CALLBACK
+    ),
+    'nd/%user_uid_optional/widgets' => array(
+      'title callback' => 'neo_dashboard_page_title',
+      'page callback' => 'neo_dashboard_widgets_page',
+      'page callback' => 'neo_dashboard_widgets_page',
+      'page arguments' => array(1),
+      'access arguments' => array('access neo dashboard defaults'),
+      'type' => MENU_CALLBACK,
+      'access callback' => 'neo_dashboard_access',
+      'file' => 'neo_dashboard.page.inc',
+    ),
+    'nd/1/system' => array(
+      'title callback' => 'neo_dashboard_page_title',
+      'page callback' => 'neo_dashboard_system_widgets_page',
+      'page callback' => 'neo_dashboard_system_widgets_page',
+      'page arguments' => array(1),
+      'access arguments' => array('access neo dashboard defaults'),
+      'type' => MENU_CALLBACK,
+      'access callback' => 'neo_dashboard_access',
+      'file' => 'neo_dashboard.page.inc',
+    ),
+  );
+  // Create default menu items for all Dashboard implementations.
+  foreach (module_invoke_all('neo_dashboard') as $type => $info) {
+    $items += array(
+      //$info['path'] .'/%user_uid_optional/neodash' => array(
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page' => array(
+        'title callback' => 'neo_dashboard_page_title',
+        'page callback' => 'neo_dashboard_page',
+        'page arguments' => array(2),
+        'access arguments' => array('access '. $type .' neo dashboard'),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+        'file' => 'neo_dashboard.page.inc',
+      ),
+      $info['path'] .'/%user_uid_optional/neodashboard' => array(
+        'title' => 'NeoDash',
+        'page callback' => 'neo_dashboard_page',
+        'page arguments' => array(2),
+        'access arguments' => array('access '. $type .' neo dashboard'),
+        'type' => MENU_NORMAL_ITEM,
+        'file' => 'neo_dashboard.page.inc',
+        'weight' => '-10',
+      ),
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page/position-widget' => array(
+        'page callback' => 'neo_dashboard_position_widget',
+        'page arguments' => array(1),
+        'access callback' => 'neo_dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'access callback' => TRUE,
+        'file' => 'neo_dashboard.page.inc',
+      ),
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page/widget-position' => array(
+        'page callback' => 'neo_dashboard_widget_position',
+        'page arguments' => array(1),
+        'access callback' => 'neo_dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'access callback' => TRUE,
+        'file' => 'neo_dashboard.page.inc',
+    ),
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page/resize-widget' => array(
+        'page callback' => 'neo_dashboard_widget_resize',
+        'page arguments' => array(1),
+        'access callback' => 'neo_dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'access callback' => TRUE,
+        'file' => 'neo_dashboard.page.inc',
+      ),
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page/widget-width' => array(
+        'page callback' => 'neo_dashboard_widget_width',
+        'page arguments' => array(1),
+        'access callback' => 'neo_dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'access callback' => TRUE,
+        'file' => 'neo_dashboard.page.inc',
+    ),
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page/widget-height' => array(
+        'page callback' => 'neo_dashboard_widget_height',
+        'page arguments' => array(1),
+        'access callback' => 'neo_dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'access callback' => TRUE,
+        'file' => 'neo_dashboard.page.inc',
+    ),
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page/add-widget' => array(
+        'page callback' => 'neo_dashboard_widget_add',
+        'access callback' => 'neo_dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'access callback' => 'neo_dashboard_access',
+        'file' => 'neo_dashboard.page.inc',
+      ),
+      $info['path'] .'/1/%neo_dashboard_'. $type .'_page/add-system-widget' => array(
+        'page callback' => 'neo_dashboard_system_widget_add',
+        'access callback' => 'neo_dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'access callback' => 'neo_dashboard_access',
+        'file' => 'neo_dashboard.page.inc',
+      ),
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page/minimize-widget' => array(
+        'page callback' => 'neo_dashboard_widget_minimize',
+        'access callback' => 'neo_dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'access callback' => TRUE,
+        'file' => 'neo_dashboard.page.inc',
+      ),
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page/change-widget-page' => array(
+        'page callback' => 'neo_dashboard_widget_change_widget_page',
+        'access callback' => 'neo_dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'access callback' => 'neo_dashboard_access',
+        //'access callback' => TRUE,
+        'file' => 'neo_dashboard.page.inc',
+      ),
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page/remove-widget' => array(
+        'page callback' => 'neo_dashboard_widget_remove',
+        'access callback' => 'neo_dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'access callback' => TRUE,
+        'file' => 'neo_dashboard.page.inc',
+      ),
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page/rename' => array(
+        'page callback' => 'neo_dashboard_page_rename',
+        'page arguments' => array(1),
+        'access arguments' => array('update '. $type .' neo dashboard'),
+        'type' => MENU_CALLBACK,
+        'access callback' => 'neo_dashboard_access',
+        //'access callback' => TRUE,
+        'file' => 'neo_dashboard.page.inc',
+      ),
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page/get-privacy' => array(
+        'page callback' => 'neo_dashboard_privacy',
+        'page arguments' => array(1),
+        'access arguments' => array('update '. $type .' neo dashboard'),
+        'type' => MENU_CALLBACK,
+        'access callback' => 'neo_dashboard_access',
+        'file' => 'neo_dashboard.page.inc',
+      ),
+      $info['path'] .'/%user_uid_optional/%neo_dashboard_'. $type .'_page/change-privacy' => array(
+        'page callback' => 'neo_dashboard_change_privacy',
+        'page arguments' => array(1),
+        'access arguments' => array('update '. $type .' neo dashboard'),
+        'type' => MENU_CALLBACK,
+        'access callback' => 'neo_dashboard_access',
+        'file' => 'neo_dashboard.page.inc',
+      ),
+    );
+  }
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_access
+ */
+function neo_dashboard_access() {
+  global $user;
+  return ($user->uid == arg(1));
+}
+
+/**
+ * Implement hook_perm().
+ */
+function neo_dashboard_perm() {
+  $perms = array('administer neo dashboard defaults', 'access neo dashboard browser', 'add personal neo dashboard', 'set default neo dashboard layout');
+  $neo_dashboards = module_invoke_all('neo_dashboard');
+  foreach ($neo_dashboards as $type => $neo_dashboard) {
+    foreach(array('access', 'update', 'delete', 'toggle privacy of', 'administer') as $perm) {
+      $perms[] = $perm .' '. $type .' neo dashboard';
+    }
+  }
+  return $perms;
+}
+
+/**
+ * Implement hook_theme().
+ */
+function neo_dashboard_theme() {
+  $path = drupal_get_path('module', 'neo_dashboard') . '/templates';
+  require_once "./". drupal_get_path('module', 'neo_dashboard') ."/neo_dashboard.admin.inc";
+  return array(
+    'neo_dashboard_page' => array(
+      'arguments' => array(
+        'tabs' => array(),
+        'widgets' => array(),
+      ),
+      'path' => $path,
+      'template' => 'neo-dashboard-page',
+    ),
+    'neo_dashboard_widget' => array(
+      'arguments' => array(
+        'widget' => array(),
+      ),
+      'path' => $path,
+      'template' => 'neo-dashboard-widget',
+    ),
+    'neo_dashboard_list_widget' => array(
+      'path' => $path,
+      'template' => 'neo-dashboard-list-widget',
+    ),
+    'neo_dashboard_select_defaults' => array(
+      'path' => $path,
+      'template' => 'neo-dashboard-select-defaults',
+    ),
+    'neo_dashboard_widget_browser' => array(
+      'path' => $path,
+      'template' => 'neo-dashboard-browse-widgets',
+    ),
+    'neo_dashboard_system_widget_browser' => array(
+      'path' => $path,
+      'template' => 'neo-dashboard-browse-system-widgets',
+    ),
+    'neo_dashboard_display_widget' => array(
+      'path' => $path,
+      'template' => 'neo-dashboard-display-widget',
+      'arguments' => array(
+        'widget' => array(),
+      ),
+    ),
+  );
+}
+
+/**
+ * Ensure that AJAX callbacks are not XSRF.
+ */
+function neo_dashboard_valid_token($page) {
+  return drupal_valid_token($_POST['token'], 'neo_dashboard '. $page->page_id);
+}
+
+/**
+ * Generate a page title for a dashboard.
+ *
+ * TODO: Genericize this function.
+ */
+function neo_dashboard_page_title() {
+  $user = user_load(arg(1));
+  return check_plain($user->name);
+}
+
+/**
+ * Wrapper function to load Ctools and other dependencies.
+ * Note that these are separated from the UI functions.
+ */
+function neo_dashboard_add_tools() {
+  ctools_include('content');
+}
+
+/**
+ * Implement hook_neo_dashboard().
+ */
+function neo_dashboard_neo_dashboard() {
+  global $user;
+
+  return array(
+    'user' => array(
+      'path' => 'nd',
+      'name' => 'User neodash',
+      'weight' => 0,
+    ),
+  );
+}
+
+/**
+ * Load information for a user dashboard.
+ * This menu loader function is the default implementation
+ * of a Dashboard.
+ *
+ * @param $path
+ *   Optional path to a specific tab.
+ * @return
+ *   If $path is specified, an object with page_id, path, title, and weight for
+ *   the tab. Otherwise, a sorted array of every tab.
+ */
+function neo_dashboard_user_page_load($path = NULL) {
+  global $user;
+  $user2 = user_load(arg(1));
+  $public = 0;
+  static $pages;
+
+  if (!isset($pages)) {
+    if ($user->uid == arg(1)) {
+        $result = db_query('SELECT page_id, path, title, weight FROM {neo_dashboard_page} WHERE uid = %d ORDER BY weight', $user->uid);
+    } else { 
+        $preresult = db_result(db_query("SELECT page_id FROM {neo_dashboard_page} WHERE uid = '%d' AND privfl = '%d'", $user2->uid, $public)); 
+        if ($preresult == 0) {
+            $result = db_query('SELECT page_id, path, title, weight FROM {neo_dashboard_page} WHERE uid = %d ORDER BY weight', $user->uid);
+        } else {
+            $result = db_query('SELECT page_id, path, title, weight FROM {neo_dashboard_page} WHERE uid = %d AND privfl = %d ORDER BY weight', $user2->uid, $public);
+        }
+    }
+    while ($page = db_fetch_object($result)) {
+      $pages[$page->path] = $page;
+      if (!isset($pages[''])) {
+        $pages[''] = $page;
+      }
+    }
+
+    // Create a fresh dashboard for new users.
+    if (count($pages) === 0) {
+      unset($pages);
+      include_once './' . drupal_get_path('module', 'neo_dashboard') . '/neo_dashboard.defaults.inc';
+      neo_dashboard_defaults($user->uid);
+      return neo_dashboard_user_page_load($path);
+    }
+  }
+
+  if (is_null($path)) {
+    return $pages;
+  }
+  else if (isset($pages[$path])) {
+    return $pages[$path];
+  }
+}
+
+/**
+ * Return a links array of tabs for the dashboard page.
+ */
+function neo_dashboard_user_tabs() {
+  global $user;
+  $user2 = user_load(arg(1));
+  $links = array();
+  $pages = neo_dashboard_user_page_load();
+
+  if(is_object($pages[''])) {
+    unset($pages['']);
+  }
+
+  foreach ($pages as $path => $page) {
+      $key = 'neo-dashboard-page-' . $page->page_id .' neo-dashboard-path-'. $user2->uid . '-' . $page->path;
+      $href = 'nd/' . $user2->uid . '/' . $page->path;
+      if (($href === $_GET['q']) || (arg(1) === NULL && $page->weight == 0)) {
+        // Make a place to add an edit icon sprite for the active link.
+        if (user_access('update user neo dashboard')) {
+          $title = l(check_plain($page->title) . '<span class="edit-icon"></span>', $_GET['q'], array('attributes' => array('class' => 'edit', 'title' => t('Edit tab')), 'html' => TRUE));
+        } else {
+          $title = check_plain($page->title);
+        }
+        if (user_access('delete user neo dashboard')) {
+          $delete_tab = '<a href="#" title="' . t('Delete tab') . '" class="delete"></a>';
+        }
+        if (user_access('toggle privacy of user neo dashboard')) {
+          $make_private_tab = '<a href="#" title="' . t('Toggle privacy') . '" class="private"></a>';
+        }
+        $links[$key . ' active'] = array(
+          'title' => $title . $delete_tab . $make_private_tab,
+          'html' => TRUE,
+          'attributes' => array('class' => 'nav-tab'),
+        );
+      }
+      elseif ($path !== $pages['']->path) {
+        $links[$key] = array(
+          'title' => $page->title,
+          'href' => $href,
+          'attributes' => array('class' => 'nav-tab'),
+        );
+      }
+  }
+
+  $allow_personal_neo_dashboard = variable_get('neo_dashboard_personal_dashboards', 0);
+  if ($allow_personal_neo_dashboard) {
+    // Check "add personal dashboard" permission
+    if (user_access('add personal neo dashboard')) {
+      $links['neo-dashboard-link-add'] = array(
+        'title' => t('Add a tab <strong>+</strong>'),
+        'href' => 'nd/'.strval($user2->uid).'/add',
+        'html' => TRUE,
+        'attributes' => array('class' => 'nav-tab'),
+      );
+    }
+  }
+
+  /* //This brings up a the links for "System Widgets" and "More Widgets" right 
+     //in the dasboard bar
+
+  if (user_access('access neo dashboard browser')) {
+    if (($user->uid != $user2->uid) and ($user->uid == 1)) {
+        $links['neo-dashboard-widgets'] = array(
+            'title' => t('More Widgets'),
+            'href' => 'nd/'.strval($user2->uid).'/widgets',
+            'attributes' => array('class' => 'nav-tab mw'),
+        );
+    } elseif ($user->uid == $user2->uid) {
+        $links['neo-dashboard-widgets'] = array(
+            'title' => t('More Widgets'),
+            'href' => 'nd/'.strval($user->uid).'/widgets',
+            'attributes' => array('class' => 'nav-tab mw'),
+        );
+    }
+  }
+  if (user_access('access neo dashboard browser')) {
+    if ($user->uid == 1) {
+        $links['neo-dashboard-system-widgets'] = array(
+            'title' => t('System Widgets'),
+            'href' => 'nd/1/system',
+            'attributes' => array('class' => 'nav-tab sys'),
+        );
+    }
+  }
+  */
+  return $links;
+}
+
+/**
+ * Add dashboard.js for user profile page.
+ */
+function neo_dashboard_user($op, &$edit, &$account, $category = NULL) {
+  global $user;
+
+  if ($op == 'view' && $account->uid == $user->uid) {
+    include './' . drupal_get_path('module', 'neo_dashboard') . '/neo_dashboard.page.inc';
+    neo_dashboard_add_ui();
+  }
+}
+
+/**
+ * Load widgets for a certain dashboard page.
+ *
+ * @param $page
+ *   A page object as returned by dashboard_user_page_load().
+ * @return array
+ *   If $path is specified, an object with page_id, path, title, and weight for
+ *   the tab. Otherwise, a sorted array of every tab.
+ */
+function neo_dashboard_load_widgets($page = NULL) {
+  static $widgets = array();
+
+  if (empty($page)) {
+    $page = neo_dashboard_user_page_load('');
+  }
+
+  if (empty($widgets[$page->page_id])) {
+    $widgets[$page->page_id] = array();
+
+    //$widgets = array_fill(0, 3, '');
+    $result = db_query('SELECT widget_id, type, subtype, conf, col, width FROM {neo_dashboard_widget} WHERE page_id = %d ORDER BY weight', $page->page_id);
+    while ($widget = db_fetch_object($result)) {
+      $widgets[$widget->widget_id] = $widget;
+    }
+  }
+
+  return $widgets;
+}
+
+/**
+ * Load all widgets for a user.
+ *
+ * @return array
+ *   If $path is specified, an object with page_id, path, title, and weight for
+ *   the tab. Otherwise, a sorted array of every tab.
+ */
+function neo_dashboard_load_all_widgets() {
+  static $widgets = array();
+  $pages = neo_dashboard_user_page_load();
+
+  if(empty($widgets)) {
+    foreach($pages as $key => $page) {
+      $result = db_query('SELECT widget_id, type, subtype, conf, col, width FROM {neo_dashboard_widget} WHERE page_id = %d ORDER BY weight', $page->page_id);
+
+      while ($widget = db_fetch_object($result)) {
+        $widgets[$widget->widget_id] = $widget;
+        $widgets[$widget->widget_id]->page_id = $page->page_id;
+      }
+    }
+  }
+
+  return $widgets;
+}

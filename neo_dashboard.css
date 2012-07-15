@@ -1,0 +1,419 @@
+/* $Id: neo_dashboard.css,v 1.14.4.1 2010/07/28 16:27:36 beretta627 Exp $ */
+
+html.js #neo-dashboard div.noscript {
+  display: none;
+}
+
+.neo-dashboard-link-add a,
+.neo-dashboard-link-add a:link,
+.neo-dashboard-link-add a:visited,
+.neo-dashboard-link-add a:active {
+  color: #fff;
+  font-style: italic;
+}
+
+div.nav-content-neo-dashboard li {
+  cursor: move;;
+}
+
+div.nav-content-neo-dashboard li.active {
+  cursor: auto;
+}
+
+a.sys {
+    position: absolute;
+    right: 105px;
+}
+a.mw {
+    position: absolute;
+    right: 5px;
+}
+
+a.mw:visited {
+    color: #fff;
+    position: absolute;
+    right: 10px;
+    font-style: italic;
+}
+
+li.active a.mw {
+    color: #fff;
+    position: absolute;
+    right: 5px;
+}
+
+div.newwidgets {
+    width: 300px;
+    height: 300px;
+    background: #C0C0C0;
+    position: absolute;
+    right: 0px;
+    margin: 10px;
+}
+
+div.newwidgets h2{
+    text-align: center;
+}
+
+#neo-dashboard #column-wrapper {
+  width: fixed;
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+}
+#neo-dashboard .column {
+  padding: 1em 0 1em 0;
+  width: 100%;
+  height: 100%;
+  /*margin: 0 1% 0 1%;*/
+  margin: 0 0 0 0;
+  float: left;
+  /* Make Empty Columns Easier to Fill */
+  min-height: 1000px;
+}
+
+#neo-dashboard .widget-wrapper {
+  margin: 0 0 20px 0;
+  background: #D4EBF9;
+}
+
+.widget-wrapper .widget .hidden { 
+    /*height: 36px; */
+}
+#neo-dashboard .widget {
+  background-image:url(images/bg1.png);
+  background-repeat: repeat-x;
+  /*height: 25px;*/
+  margin: 0 0 20px 0;
+}
+
+#neo-dashboard .alpha {
+  clear: both;
+}
+
+#neo-dashboard .tools {
+  float: right;
+  padding: 5px 8px 0 0;
+  position: relative;
+}
+
+#neo-dashboard h2 {
+  color:"#48A5DF";
+  font-weight: bold;
+  font-size: 80%;
+  cursor: move !important;
+  margin: 0 30px 0 0 !important; /* space for tools */
+  line-height: 25px !important;
+  padding: 0 0 0 10px !important;
+}
+
+#neo-dashboard h2 a {
+  color: #fff;
+  display: block;  
+  line-height: 1.3em;
+}
+
+#neo-dashboard .widget .content {
+  border-top: 1px solid #ddd;
+  overflow: visible;
+  padding: 10px;
+  background: #D4EBF9;
+  height: 100%;
+}
+
+#neo-dashboard .widget .content ul,
+#neo-dashboard .widget .content ol {
+  padding-left: 10px;
+}
+
+#neo-dashboard .widget .content .item-list ul {
+  padding-left: 0;
+}
+
+#neo-dashboard .widget .content .node,
+#neo-dashboard .widget .content .node .content {
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+.neo-dashboard-placeholder {
+  border: 2px dashed #96bc44;
+}
+
+/* Tabs */
+.nav-content-neo-dashboard {
+  background-image:url(images/bg1.png);
+  background-repeat: repeat-x;
+  height: 25px;
+  border-bottom: 1px solid #ddd;
+  padding: 0 20px;
+  /*width: 100%;*/
+}
+
+.nav-content-neo-dashboard ul li {
+  float: left;
+  padding: 0 0 0 11px;
+  border-bottom: none;
+}
+
+.nav-content-neo-dashboard ul li .nav-tab {
+  color: #fff;
+  font-size: 80%;
+  font-weight: bold;
+  display: block;
+  float: left;
+  height: 22px;
+  padding: 4px 11px 0 0;
+}
+
+.nav-content-neo-dashboard ul li form,
+.nav-content-neo-dashboard ul li form .form-item,
+.nav-content-neo-dashboard ul li form .form-submit {
+  padding: 0;
+  margin: 0;
+}
+
+.nav-content-neo-dashboard ul li.active {
+  padding: 0 0 0 11px;
+/*  border: 1px solid #ddd;*/
+  border-bottom: none;
+  text-decoration: underline;
+/*  background: #fff;*/
+}
+  
+.nav-content-neo-dashboard ul li.active .nav-tab {
+  height: 22px;
+  padding: 4px 11px 0 0;
+}
+
+.nav-content-neo-dashboard ul li.active a:hover, a:active, li a.active {
+  color: #fff;  
+  /*text-decoration: underline;*/
+}
+
+/* Sprites */
+.nav-content-neo-dashboard ul li.active span.hover a.edit span,
+.nav-content-neo-dashboard ul li.active span.hover a.delete,
+#neo-dashboard a.minimize-widget,
+#neo-dashboard a.change-widget-page,
+#neo-dashboard a.remove-widget {
+  background: url(images/icons.png) no-repeat;
+}
+a.private{
+  background: url(images/icon2.png) no-repeat;
+}
+
+.nav-content-neo-dashboard ul li.active span.hover a.edit span {
+  color: #fff;
+  padding-left: 20px;
+  background-position: 8px -0px;
+}
+
+.nav-content-neo-dashboard ul li.active span.hover a.delete {
+  color: #fff;
+  height: 12px;
+  padding-left: 20px;
+  background-position: 8px -30px;
+}
+
+.nav-content-neo-dashboard ul li.active span.hover a.private {
+  color: #fff;
+  height: 12px;
+  padding-left: 24px;
+  background-position: 8px;
+}
+
+#neo-dashboard a.minimize-widget {
+  display: block;
+  float: left;
+  height: 12px;
+  padding-left: 12px;
+  width: 0px;
+  background-position: 0 -15px;
+}
+
+#neo-dashboard a.remove-widget {
+  display: block;
+  float: left;
+  height: 12px;
+  margin-left: 3px;
+  padding-left: 12px;
+  width: 0px;
+  background-position: 0 -30px;
+}
+
+#neo-dashboard a.change-widget-page { 
+  display: block;
+  float: left;
+  height: 12px;
+  margin-left: 3px;
+  padding-left: 12px;
+  width: 0px;
+  background-position: 0 -44px;
+}
+
+#neo-dashboard div.tools ul {
+  background: #fff;
+  border: 1px solid #ccc;
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 10px;
+  position: absolute;
+  right: 0px;
+  top: 35px;
+  z-index: 10;
+
+}
+
+#neo-dashboard div.tools ul li {
+  background: none;
+  margin: 0;
+  padding: 0;
+  width: 102px;
+}
+
+/* Admin list of widgets */
+#neo-dashboard-list-widget-form {
+  padding: 1.5em 0;
+}
+
+#neo-dashboard-list-widget-form div.form-item,
+#neo-dashboard-list-widget-form div.form-item label {
+  display: inline;
+}
+
+#neo-dashboard-list-widget-form div.form-item {
+  margin: 0 2em 0 0;
+}
+
+.widget-entry {
+  margin-bottom: 1em;
+}
+
+.widget-entry .widget-name {
+  width: 40%;
+}
+
+.widget-entry .widget-description {
+  width: 40%;
+}
+
+.widget-entry .widget-ops {
+  width: 20%;
+}
+
+/** 
+ * Public admin page 
+ */
+.neo-dashboard-widget {
+  border-bottom: 1px solid #D4EBF9;
+  float: left;
+  margin-bottom: 1.2em;
+  padding-bottom: 1.2em;
+  width: 100%;
+}
+
+.neo-dashboard-widget h3 {
+  font-weight: bold;
+  margin: 3px 0 3px 0 !important;
+}
+
+.neo-dashboard-widget .widget-thumbnail {
+  float: left;
+  margin-right: 1.2em;
+}
+
+.neo-dashboard-widget .widget-content {
+}
+
+.neo-dashboard-widget .widget-desc {
+  line-height:1.5em;
+  margin-bottom: 3px;
+}
+
+.neo-dashboard-widget .widget-edit {
+  font-size: 0.9em;
+}
+
+.neo-dashboard-widget .widget-edit .widget-button {
+  color: #888;
+  margin-right: 10px;
+}
+
+.neo-dashboard-widget .widget-edit .widget-tags {
+  padding-bottom: 1.3em;
+}
+
+#modalContent {
+  z-index: 2001 !important;
+}
+
+/* Filter by categories */
+#neo-dashboard-select-widget-form {
+  padding-bottom: 1.5em;
+  width: 100%;
+}
+
+#neo-dashboard-select-widget-form .form-checkboxes {
+  display: inline;
+}
+
+#neo-dashboard-select-widget-form .form-checkboxes .form-item {
+  display: inline;
+  margin-right: 1.6em;
+}
+
+#neo-dashboard-select-widget-form .form-title {
+  margin-top: 0;
+}
+
+#neo-dashboard-select-widget-form #edit-widget-apply {
+  margin: 0;
+}
+
+.ui-state-highlight { 
+    background: #000000;
+    opacity: 0.4; 
+}
+
+
+#nav-separate-neo-dashboard {
+  width: 210px;
+  margin-left: 78.8%;
+  height: 20px;
+  border-bottom: 1px solid #ddd;
+  padding: 0 20px 0 20px;
+  float: right;
+}
+
+#nav-separate-neo-dashboard-hidden {
+  /*background-color:#FFFFFF;*/
+  background-repeat: repeat-x;
+  width: 210px;
+  margin-left: 78.8%;
+  height: 25px;
+  border-bottom: 1px solid #ddd;
+  padding: 0 20px 0 20px;
+  float: right;
+}
+
+#nav-separate-neo-dashboard ul li.active a:hover {
+  color: #fff;  
+  text-decoration: underline;
+}
+.ui-resizable-helper { 
+    border: 2px dotted #00F; 
+}
+
+.scroll-pane { overflow: auto; width: 100%; float:left; }
+.scroll-content { width: 2440px; float: left; }
+.scroll-content-item { width: 100px; height: 100px; float: left; margin: 10px; font-size: 3em; line-height: 96px; text-align: center; }
+* html .scroll-content-item { display: inline; } /* IE6 float double margin bug */
+.scroll-bar-wrap { clear: left; padding: 0 4px 0 2px; margin: 0 -1px -1px -1px; }
+.scroll-bar-wrap .ui-slider { background: none; border:0; height: 2em; margin: 0 auto;  }
+.scroll-bar-wrap .ui-handle-helper-parent { position: relative; width: 100%; height: 100%; margin: 0 auto; }
+.scroll-bar-wrap .ui-slider-handle { top:.2em; height: 1.5em; }
+.scroll-bar-wrap .ui-slider-handle .ui-icon { margin: -8px auto 0; position: relative; top: 50%; }
+

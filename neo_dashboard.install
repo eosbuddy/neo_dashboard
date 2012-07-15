@@ -1,0 +1,214 @@
+<?php
+// $Id: neo_dashboard.install,v 1.9.4.1 2010/07/28 16:27:36 beretta627 Exp $
+
+/**
+ * @file
+ * NeoDash module install file.
+ */
+
+function neo_dashboard_install() {
+  drupal_install_schema('neo_dashboard');
+}
+
+function neo_dashboard_uninstall() {
+  drupal_uninstall_schema('neo_dashboard');
+}
+
+function neo_dashboard_schema() {
+  return array(
+    'neo_dashboard_page' => array(
+      'fields' => array(
+        'page_id' => array(
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'uid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'path' => array(
+          'type' => 'varchar',
+          'length' => 22,
+          'not null' => TRUE,
+        ),
+        'weight' => array(
+          'type' => 'int',
+          'size' => 'tiny',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'title' => array(
+          'type' => 'varchar',
+          'length' => 20,
+          'not null' => TRUE,
+        ),
+        'privfl' => array(
+          'type' => 'int',
+          'size' => 'tiny',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+      ),
+      'primary key' => array('page_id'),
+      'unique keys' => array(
+        'uid_path' => array('uid', 'path'),
+      ),
+      'indexes' => array(
+        'uid_weight' => array('uid', 'weight'),
+      ),
+    ),
+    'neo_dashboard_widget' => array(
+      'fields' => array(
+        'widget_id' => array(
+          //'type' => 'serial',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'page_id' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'system' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'type' => array(
+          'type' => 'varchar',
+          'length' => '32',
+          'default' => '',
+        ),
+        'subtype' => array(
+          'type' => 'varchar',
+          'length' => '64',
+          'default' => '',
+        ),
+        'conf' => array(
+          'type' => 'blob',
+          'notnull' => FALSE,
+          'size' => 'big',
+        ),
+        'col' => array(
+          'type' => 'int',
+          'size' => 'tiny',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'weight' => array(
+          'type' => 'int',
+          'size' => 'tiny',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'visibility' => array(
+          'type' => 'int',
+          'size' => 'tiny',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => '1',
+        ),
+        'height' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 150,
+        ),
+        'width' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 200,
+        ),
+        'wtop' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 150,
+        ),
+        'wleft' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 750,
+        ),
+        'wpofl' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+        'wrefl' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+      ),
+      //'unique keys' => array(
+      //  'widget_id' => array('widget_id', 'page_id'),
+      //),
+      'indexes' => array(
+        'page_id_weight' => array('page_id', 'weight'),
+      ),
+    ),
+    'neo_dashboard_default' => array(
+      'fields' => array(
+        'id' => array(
+          'type' => 'serial',
+          'size' => 'small',
+          'not null' => TRUE,
+        ),
+        'title' => array(
+          'type' => 'varchar',
+          'length' => '255',
+          'not null' => TRUE,
+        ),
+        'description' => array(
+          'type' => 'varchar',
+          'length' => '255',
+          'not null' => TRUE,
+        ),
+        'thumbnail' => array(
+          'type' => 'int',
+          'not null' => FALSE,
+        ),
+        'tags' => array(
+          'type' => 'varchar',
+          'length' => '255',
+          'not null' => TRUE,
+        ),
+        'default_enabled' => array(
+          'type' => 'int',
+          'size' => 'tiny',
+          'not null' => TRUE,
+        ),
+        'default_permanent' => array(
+          'type' => 'int',
+          'size' => 'tiny',
+          'not null' => TRUE,
+        ),
+        'widget_type' => array(
+          'type' => 'varchar',
+          'length' => '32',
+          'not null' => TRUE,
+        ),
+        'subtype' => array(
+          'type' => 'varchar',
+          'length' => '64',
+          'not null' => TRUE,
+        ),
+        'conf' => array(
+          'type' => 'blob',
+          'size' => 'big',
+          'not null' => TRUE,
+        ),
+      ),
+      'primary key' => array('id'),
+    ),
+  );
+}

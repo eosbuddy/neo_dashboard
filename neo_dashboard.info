@@ -1,0 +1,14 @@
+; $Id: dashboard.info,v 1.8.4.2 2010/07/28 16:27:36 beretta627 Exp $
+name = Neo Dashboard
+description = Creates customizable pages of widgets.
+core = 6.x
+package = TheAzureBlue
+dependencies[] = ctools
+dependencies[] = views
+
+; Information added by drupal.org packaging script on 2010-07-29
+version = "6.x-1.8-dev"
+core = "6.x"
+project = "neo_dashboard"
+datestamp = "1280361928"
+
