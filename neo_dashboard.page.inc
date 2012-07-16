@@ -640,10 +640,15 @@ function template_preprocess_neo_dashboard_display_widget(&$vars) {
 function template_preprocess_neo_dashboard_widget_browser(&$vars) {
 
   global $user;
+  $user2 = user_load(arg(1));
   //$widgets = neo_dashboard_get_public_defaults();
   $widgets_public = neo_dashboard_get_public_defaults();
   $widgets_system = neo_dashboard_get_system_defaults();
-  $widgets = $widgets_public + $widgets_system;
+  if (($user->uid == 1) && ($user2->uid == 1)) {
+     $widgets = $widgets_public + $widgets_system;
+  } else {
+     $widgets = $widgets_public;
+  }
 
   $form_state = array(
     'widgets' => $widgets,
